@@ -28,13 +28,15 @@ export async function GET(request: Request) {
             padding: '40px',
           }}
         >
-          <img
-            src={product.image}
-            alt={product.title}
+          <div
             style={{
               width: '300px',
               height: '300px',
-              objectFit: 'contain',
+              position: 'relative',
+              backgroundImage: `url(${product.image})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
             }}
           />
           <div
@@ -63,7 +65,7 @@ export async function GET(request: Request) {
         height: 630,
       }
     );
-  } catch (error) {
+  } catch {
     return new Response('Failed to generate OG image', { status: 500 });
   }
 } 

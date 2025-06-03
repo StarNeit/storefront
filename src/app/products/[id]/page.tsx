@@ -3,15 +3,15 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getProduct } from '@/lib/api';
 
-interface ProductPageProps {
-  params: {
-    id: string;
-  };
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const product = await getProduct(parseInt(params.id));
+    const resolvedParams = await params;
+    const product = await getProduct(parseInt(resolvedParams.id));
     
     return {
       title: product.title,
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         ],
       },
     };
-  } catch (error) {
+  } catch {
     return {
       title: 'Product Not Found',
       description: 'The requested product could not be found.',
@@ -37,9 +37,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params }: Props) {
   try {
-    const product = await getProduct(parseInt(params.id));
+    const resolvedParams = await params;
+    const product = await getProduct(parseInt(resolvedParams.id));
 
     return (
       <main className="container mx-auto px-4 py-8">
@@ -71,7 +72,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </main>
     );
-  } catch (error) {
+  } catch {
     notFound();
   }
 } 
